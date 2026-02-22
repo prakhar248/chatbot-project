@@ -11,60 +11,103 @@ const DEFAULT_MODEL = 'dolphin-llama3';
 
 /**
  * Get a completion from the Ollama model (via proxy if configured, else direct).
+ * 
  * @param {string} prompt - User message
+ * @param {string} [systemPrompt] - System message to define bot behavior (optional)
  * @param {string} [model] - Model name (default: dolphin-llama3)
  * @returns {Promise<string>} Assistant reply text
  */
-export async function getOllamaResponse(prompt, model = DEFAULT_MODEL) {
+export async function getOllamaResponse(prompt, systemPrompt = '', model = DEFAULT_MODEL) {
   if (PROXY_BASE) {
-    return getResponseViaProxy(prompt, model);
+    return getResponseViaProxy(prompt, systemPrompt, model);
   }
-  return getResponseDirect(prompt, model);
+  return getResponseDirect(prompt, systemPrompt, model);
 }
 
-async function getResponseViaProxy(prompt, model) {
+/**
+ * Send request through the backend proxy server
+ * The proxy handles CORS and forwards requests to the Ollama API
+ */
+async function getResponseViaProxy(prompt, systemPrompt = '', model) {
   const url = `${PROXY_BASE}/chat`;
-  const res = await fetch(url, {
-    method: 'POST',
-    mode: 'cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, model }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-  const message = data.error || data.message;
-
-  if (!res.ok) {
-    throw new Error(message || `Proxy error: ${res.status}`);
+  
+  // Prepare the request body with both user prompt and system prompt
+  const requestBody = {
+    prompt,
+    model,
+  };
+  
+  // Include system prompt if provided
+  if (systemPrompt) {
+    requestBody.systemPrompt = systemPrompt;
   }
+  
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+    });
 
-  return (data.response && data.response.trim()) || '(No response)';
+    const data = await res.json().catch(() => ({}));
+    const message = data.error || data.message;
+
+    if (!res.ok) {
+      throw new Error(message || `Proxy error: ${res.status}`);
+    }
+
+    return (data.response && data.response.trim()) || '(No response)';
+  } catch (err) {
+    // Re-throw with better error messages for common cases
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      throw new Error('Failed to fetch: Backend server may be offline');
+    }
+    throw err;
+  }
 }
 
-async function getResponseDirect(prompt, model) {
+/**
+ * Send request directly to Ollama (used in development with local or tunneled Ollama)
+ */
+async function getResponseDirect(prompt, systemPrompt = '', model) {
   const url = `${OLLAMA_BASE}/api/generate`;
-  const res = await fetch(url, {
-    method: 'POST',
-    mode: 'cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      prompt,
-      stream: false,
-    }),
-  });
+  
+  // Combine system prompt with user prompt if system prompt is provided
+  const fullPrompt = systemPrompt 
+    ? `${systemPrompt}\n\nUser: ${prompt}` 
+    : prompt;
+  
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model,
+        prompt: fullPrompt,
+        stream: false,
+      }),
+    });
 
-  if (!res.ok) {
-    const text = await res.text();
-    if (res.status === 404) {
-      throw new Error(`Model "${model}" not found. Pull it with: ollama pull ${model}`);
+    if (!res.ok) {
+      const text = await res.text();
+      if (res.status === 404) {
+        throw new Error(`Model "${model}" not found. Pull it with: ollama pull ${model}`);
+      }
+      if (res.status === 0 || res.status === 502) {
+        throw new Error('Cannot reach Ollama. Is it running? Start it with: ollama serve');
+      }
+      throw new Error(text || `Ollama error: ${res.status}`);
     }
-    if (res.status === 0 || res.status === 502) {
-      throw new Error('Cannot reach Ollama. Is it running? Start it with: ollama serve');
+
+    const data = await res.json();
+    return (data.response && data.response.trim()) || '(No response)';
+  } catch (err) {
+    // Re-throw with better error messages
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      throw new Error('Failed to fetch: Cannot reach Ollama server');
     }
-    throw new Error(text || `Ollama error: ${res.status}`);
+    throw err;
   }
-
-  const data = await res.json();
-  return (data.response && data.response.trim()) || '(No response)';
 }
