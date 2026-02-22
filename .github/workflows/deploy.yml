@@ -27,10 +27,8 @@ jobs:
 
       - name: Install and build
         env:
-          # Prefer proxy (stable): VITE_CHAT_API_URL = your Render backend URL (e.g. https://your-proxy.onrender.com)
-          # Or direct tunnel: OLLAMA_TUNNEL_URL = tunnel URL (e.g. https://xxx.trycloudflare.com)
-          VITE_CHAT_API_URL: ${{ secrets.VITE_CHAT_API_URL }}
-          VITE_OLLAMA_API_URL: ${{ secrets.OLLAMA_TUNNEL_URL }}
+          # Use Render backend proxy
+          VITE_CHAT_API_URL: https://chatbot-project-trgr.onrender.com
         run: |
           cd chatbot-project
           npm ci
