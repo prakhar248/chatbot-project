@@ -27,8 +27,9 @@ jobs:
 
       - name: Install and build
         env:
-          # Set in repo: Settings → Secrets and variables → Actions → New repository secret
-          # Name: OLLAMA_TUNNEL_URL , Value: your tunnel URL (e.g. https://xxx.trycloudflare.com)
+          # Prefer proxy (stable): VITE_CHAT_API_URL = your Render backend URL (e.g. https://your-proxy.onrender.com)
+          # Or direct tunnel: OLLAMA_TUNNEL_URL = tunnel URL (e.g. https://xxx.trycloudflare.com)
+          VITE_CHAT_API_URL: ${{ secrets.VITE_CHAT_API_URL }}
           VITE_OLLAMA_API_URL: ${{ secrets.OLLAMA_TUNNEL_URL }}
         run: |
           cd chatbot-project
