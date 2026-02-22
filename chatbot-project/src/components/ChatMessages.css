@@ -4,94 +4,8 @@
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        background-color: #f5f5f5;
-        padding: 20px;
       }
 
-      .chat-message-user {
-        display: flex;
-        justify-content: flex-end;
-        align-items: flex-start;
-        margin-bottom: 15px;
-      }
-
-      .chat-message-robot {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 15px;
-      }
-
-      .chat-message-error {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 15px;
-      }
-
-      .chat-message-text {
-        background-color: #ffffff;
-        padding: 12px 16px;
-        border-radius: 12px;
-        margin-right: 10px;
-        margin-left: 10px;
-        max-width: 400px;
-        word-wrap: break-word;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      }
-
-      .chat-message-text.error-text {
-        background-color: #ffe6e6;
-        border-left: 4px solid #ff6b6b;
-        color: #d63031;
-      }
-
-      .chat-message-user .chat-message-text {
-        background-color: #007bff;
-        color: white;
-      }
-
-      .chat-message-profile {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
-      }
-
-      /* Typing effect - animated dots */
-      .chat-typing-dots {
-        display: flex;
-        gap: 4px;
-        align-items: center;
-      }
-
-      .chat-typing-dots span {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #999;
-        animation: typing-bounce 0.6s ease-in-out infinite;
-      }
-
-      .chat-typing-dots span:nth-child(2) {
-        animation-delay: 0.1s;
-      }
-
-      .chat-typing-dots span:nth-child(3) {
-        animation-delay: 0.2s;
-      }
-
-      @keyframes typing-bounce {
-        0%, 60%, 100% {
-          opacity: 0.3;
-          transform: translateY(0);
-        }
-        30% {
-          opacity: 1;
-          transform: translateY(-8px);
-        }
-      }
-
-      /* Welcome message */
       .chat-welcome {
         flex: 1;
         display: flex;
@@ -115,29 +29,44 @@
         color: #666;
       }
 
-      /* Loading indicator */
-      .chat-loading {
+      .chat-message-user {
         display: flex;
-        align-items: center;
-        gap: 10px;
+        justify-content: end;
+        align-items: start;
+      }
+
+      .chat-message-robot {
+        display: flex;
+        align-items: start;
+      }
+
+      .chat-message-text {
+        background-color: rgb(238, 238, 238);
         padding: 15px 20px;
-        background-color: #f0f0f0;
-        border-radius: 12px;
+        border-radius: 10px;
+        margin-right: 10px;
         margin-left: 10px;
-        max-width: 120px;
+        margin-bottom: 20px;
+        max-width: 300px;
       }
 
-      .chat-spinner {
-        width: 20px;
-        height: 20px;
-        border: 3px solid #ddd;
-        border-top-color: #007bff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
+      .chat-message-profile {
+        width: 45px;
       }
 
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+      .chat-typing-dots span {
+        animation: typing-bounce 0.6s ease-in-out infinite;
       }
+
+      .chat-typing-dots span:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .chat-typing-dots span:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+
+      @keyframes typing-bounce {
+        0%, 60%, 100% { opacity: 0.3; }
+        30% { opacity: 1; }
+      } 
