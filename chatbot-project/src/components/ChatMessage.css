@@ -22,3 +22,20 @@
       .chat-message-profile {
         width: 45px;
       }
+
+      .chat-typing-dots span {
+        animation: typing-bounce 0.6s ease-in-out infinite;
+      }
+
+      .chat-typing-dots span:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .chat-typing-dots span:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+
+      @keyframes typing-bounce {
+        0%, 60%, 100% { opacity: 0.3; }
+        30% { opacity: 1; }
+      }

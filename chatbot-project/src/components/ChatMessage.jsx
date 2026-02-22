@@ -2,7 +2,7 @@ import RobotProfileImage from '../assets/robot.png';
 import UserProfileImage from '../assets/user.png' ;
 import './ChatMessage.css';  
 
-export function ChatMessage({ message, sender }) {
+export function ChatMessage({ message, sender, isTyping }) {
         // const message = props.message;
         // const sender = props.sender;
         // const { message, sender } = props;
@@ -28,7 +28,13 @@ export function ChatMessage({ message, sender }) {
               <img src={RobotProfileImage} className="chat-message-profile" />
             )}
             <div className="chat-message-text">
-              {message}
+              {isTyping ? (
+                <span className="chat-typing-dots">
+                  <span>.</span><span>.</span><span>.</span>
+                </span>
+              ) : (
+                message
+              )}
             </div>
             {sender === 'user' && (
               <img src={UserProfileImage } className="chat-message-profile" />

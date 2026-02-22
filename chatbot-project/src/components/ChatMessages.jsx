@@ -12,17 +12,25 @@ function ChatMessages({ chatMessages }) {
           }
         }, [chatMessages]);
 
+        const isEmpty = chatMessages.length === 0;
+
         return (
           <div className="chat-messages-container" ref={chatMessagesRef}>
-            {chatMessages.map((chatMessage) => {
-              return (
+            {isEmpty ? (
+              <div className="chat-welcome">
+                <h2 className="chat-welcome-title">Start a new chat with Dolphin</h2>
+                <p className="chat-welcome-subtitle">Send a message below to begin</p>
+              </div>
+            ) : (
+              chatMessages.map((chatMessage) => (
                 <ChatMessage
                   message={chatMessage.message}
                   sender={chatMessage.sender}
+                  isTyping={chatMessage.isTyping}
                   key={chatMessage.id}
                 />
-              );
-            })}
+              ))
+            )}
           </div>
         );
       }
