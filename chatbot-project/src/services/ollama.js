@@ -1,20 +1,23 @@
 /**
- * Service to talk to a local Ollama API (e.g. Dolphin model).
- * Uses Vite proxy in dev: /ollama -> http://localhost:11434
+ * Service to talk to Ollama API (local or tunneled).
+ * - Dev: app at http://localhost:5173; uses Vite proxy /ollama -> http://localhost:11434 (no env needed).
+ * - Production: set VITE_OLLAMA_API_URL to your tunnel URL (e.g. https://xxx.trycloudflare.com).
  */
 
-const OLLAMA_BASE = '/ollama';
+const OLLAMA_BASE = (import.meta.env.VITE_OLLAMA_API_URL || '/ollama').replace(/\/$/, '');
 const DEFAULT_MODEL = 'dolphin-llama3';
 
 /**
- * Get a completion from the local Ollama model.
+ * Get a completion from the Ollama model.
  * @param {string} prompt - User message
- * @param {string} [model] - Model name (default: dolphin)
+ * @param {string} [model] - Model name (default: dolphin-llama3)
  * @returns {Promise<string>} Assistant reply text
  */
 export async function getOllamaResponse(prompt, model = DEFAULT_MODEL) {
-  const res = await fetch(`${OLLAMA_BASE}/api/generate`, {
+  const url = `${OLLAMA_BASE}/api/generate`;
+  const res = await fetch(url, {
     method: 'POST',
+    mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model,

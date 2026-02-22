@@ -1,6 +1,8 @@
 # Hosting the chatbot online with GitHub
 
-You can host the **frontend** of this chatbot for free using GitHub. Two simple options:
+You can host the **frontend** of this chatbot for free using GitHub. Two simple options.
+
+**For a demo where the hosted app talks to your local Ollama via a Cloudflare tunnel**, see **[DEMO-SETUP.md](./DEMO-SETUP.md)** for the full flow (tunnel, CORS, GitHub Pages, and best practices).
 
 ---
 
@@ -143,7 +145,7 @@ When you host the frontend online:
 
 So:
 
-- **Local use:** Run `npm run dev` and Ollama on your laptop → full chatbot with Dolphin.
+- **Local use:** Run `npm run dev` and Ollama on your laptop, then open **http://localhost:5173** → full chatbot with Dolphin.
 - **Hosted use:** You only get the static frontend unless you:
   - Run a **backend** that the hosted site can call, and that backend talks to Ollama (or another API), or  
   - Point the hosted app at a **hosted LLM API** instead of local Ollama.

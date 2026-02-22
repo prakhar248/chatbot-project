@@ -26,6 +26,10 @@ jobs:
           cache-dependency-path: chatbot-project/package-lock.json
 
       - name: Install and build
+        env:
+          # Set in repo: Settings → Secrets and variables → Actions → New repository secret
+          # Name: OLLAMA_TUNNEL_URL , Value: your tunnel URL (e.g. https://xxx.trycloudflare.com)
+          VITE_OLLAMA_API_URL: ${{ secrets.OLLAMA_TUNNEL_URL }}
         run: |
           cd chatbot-project
           npm ci
