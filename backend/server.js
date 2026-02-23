@@ -6,7 +6,7 @@
 
 const express = require('express');
 const cors = require('cors');
-
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -31,18 +31,28 @@ app.post('/chat', async (req, res) => {
   }
 
   const { prompt, model = 'dolphin-llama3' } = req.body;
+  const timestamp = new Date().toISOString();
+
+  // Log user prompt
+  console.log(`\n🕒 ${timestamp}`);
+  console.log('🧑 USER PROMPT:', prompt);
+
+  // Save to file
+  fs.appendFileSync('prompts.log', `${timestamp} USER: ${prompt}\n`);
 
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid "prompt" in request body' });
   }
 
   const generateUrl = `${OLLAMA_URL}/api/generate`;
+  const ollamaPayload = { model, prompt, stream: false };
+  console.log('📤 OLLAMA REQUEST:', ollamaPayload);
 
   try {
     const ollamaRes = await fetch(generateUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, prompt, stream: false }),
+      body: JSON.stringify(ollamaPayload),
     });
 
     if (!ollamaRes.ok) {
@@ -63,6 +73,8 @@ app.post('/chat', async (req, res) => {
 
     const data = await ollamaRes.json();
     const responseText = (data.response && data.response.trim()) || '(No response)';
+    console.log('🤖 OLLAMA RESPONSE:', responseText);
+    fs.appendFileSync('prompts.log', `${timestamp} BOT: ${responseText}\n\n`);
 
     res.json({ response: responseText });
   } catch (err) {
