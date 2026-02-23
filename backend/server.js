@@ -24,7 +24,7 @@ app.get('/health', (req, res) => {
 });
 
 app.post('/chat', async (req, res) => {
-  console.log("🔥 /chat endpoint hit");
+  console.log(" /chat endpoint hit");
   if (!OLLAMA_URL) {
     return res.status(503).json({
       error: 'OLLAMA_URL is not configured. Set it in your environment (e.g. on Render).',
@@ -35,8 +35,8 @@ app.post('/chat', async (req, res) => {
   const timestamp = new Date().toISOString();
 
   // Log user prompt
-  console.log(`\n🕒 ${timestamp}`);
-  console.log('🧑 USER PROMPT:', prompt);
+  console.log(`\n ${timestamp}`);
+  console.log(' USER PROMPT:', prompt);
 
   // Save to file
   fs.appendFileSync('prompts.log', `${timestamp} USER: ${prompt}\n`);
@@ -47,7 +47,7 @@ app.post('/chat', async (req, res) => {
 
   const generateUrl = `${OLLAMA_URL}/api/generate`;
   const ollamaPayload = { model, prompt, stream: false };
-  console.log('📤 OLLAMA REQUEST:', ollamaPayload);
+  console.log(' OLLAMA REQUEST:', ollamaPayload);
 
   try {
     const ollamaRes = await fetch(generateUrl, {
