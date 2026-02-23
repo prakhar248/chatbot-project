@@ -24,6 +24,7 @@ app.get('/health', (req, res) => {
 });
 
 app.post('/chat', async (req, res) => {
+  console.log("🔥 /chat endpoint hit");
   if (!OLLAMA_URL) {
     return res.status(503).json({
       error: 'OLLAMA_URL is not configured. Set it in your environment (e.g. on Render).',
